@@ -1,5 +1,5 @@
 const {
-  respondWith404NotFound,
+  respondWith404NotFound,urlPathOf
 } = require('./httpHelpers');
 const { routerHandleResult } = require('./routerHandleResult');
 
@@ -9,8 +9,20 @@ const routers = [
   require('./contactDetails').contactDetailsRouter,
 ];
 
+//what a stupid way of handling
 module.exports = function(request, response) {
-  if (routers[0].handle(request, response) !== routerHandleResult.HANDLED) {
+//routers.forEach((i,e) => {
+  if (urlPathOf(request) == '/ping'){
+    routers[0].handle(request, response);
+  }
+  else if (urlPathOf(request) == '/contacts'){
+    routers[1].handle(request, response);
+  }
+  else if (urlPathOf(request) == '/contactDetails'){
+    routers[2].handle(request, response);
+  }
+  else {
     respondWith404NotFound(response);
-  };
+  }
+//});
 };
