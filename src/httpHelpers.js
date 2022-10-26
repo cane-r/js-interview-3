@@ -9,6 +9,10 @@ filterByWordAndPageBySize = (contacts,request) => {
 
   contacts.sort((a,b) => a.name.localeCompare(b.name));
   let res;
+  
+  if(request.pathParam) {
+    return contacts.selectFromContactsById(request.pathParam);
+  }
 
   if(phrase) {
     res = filterByWord(contacts,phrase);
@@ -62,6 +66,11 @@ module.exports = {
     response.end(cause);
   },
 
+  respondWith204NoContent: (response) => {
+    response.writeHead(204);
+    response.end();
+  },
+
   filterByWordAndPageBySize,
 
   validateParameters:(request) => {
@@ -69,8 +78,9 @@ module.exports = {
 
     const phraseParam = parameters.phrase;
     const limitParam = parameters.limit;
+    const url = request.url;
 
-    if( (request.url.includes("phrase") && !phraseParam) || (request.url.includes("limit") && isNaN(parseInt(limitParam))) ) {
+    if( (url.includes("phrase") && !phraseParam) || ( url.includes("limit") && (isNaN(parseInt(limitParam)) || limitParam != parseInt(limitParam) || parseInt(limitParam) < 0 )) ) {
       return false;
     }
     return true;
